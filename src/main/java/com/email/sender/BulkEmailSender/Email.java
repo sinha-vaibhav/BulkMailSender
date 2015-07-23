@@ -53,13 +53,4 @@ public class Email {
 				+ ", toEmailAddress=" + toEmailAddress + ", subject=" + subject
 				+ ", body=" + body + "]";
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

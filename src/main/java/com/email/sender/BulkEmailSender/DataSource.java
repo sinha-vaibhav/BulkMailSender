@@ -38,7 +38,6 @@ public class DataSource {
 
 		try {
 			return connection;
-			//return DriverManager.getConnection(url,user,password);
 		} catch (Exception e) {
 			System.out.println("Failed to get database connection");
 			System.exit(0);
@@ -79,7 +78,7 @@ public class DataSource {
 	public void insertIntoDatabase(int number) {
 
 		Connection connection = this.getConnection();
-		String insertTableSQL = "INSERT INTO MAIL(`FROM`,`TO`,`SUBJECT`,`BODY`) VALUES (?,?,?,?)";
+		String insertTableSQL = "INSERT INTO mail(`FROM`,`TO`,`SUBJECT`,`BODY`) VALUES (?,?,?,?)";
 		for(int i=0;i<number;i++) {
 
 			try {
@@ -105,24 +104,14 @@ public class DataSource {
 	
 	public static void updateSentEmail(int id) {
 		
-		String updateQuery = "UPDATE MAIL SET `SENT_STATUS`=? WHERE `ID`=?;";
+		String updateQuery = "UPDATE mail SET `SENT_STATUS`=? WHERE `ID`=?;";
 		try {
 		PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
 		preparedStatement.setInt(1, 1);
 		preparedStatement.setInt(2, id);
+		preparedStatement.executeUpdate();
 		} catch(Exception e) {
 			System.out.println("Unable to update Mail Sent Status for ID -> " + id);
 		}
-		
-		
 	}
-
-
-
-
-
-
-
-
-
 }
