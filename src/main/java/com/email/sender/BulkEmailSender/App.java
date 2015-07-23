@@ -18,14 +18,17 @@ public class App
 		System.out.println("\n\n\t====Welcome to Mail Sender Application===\n\n ");
 		
 		System.out.println("Checking your database status....");
-		ExecutorService executor = Executors.newFixedThreadPool(20);
+		MailingService mailService = new MailingService();
+		//mailService.initSession();
+	//	dataSource.insertIntoDatabase(1000);
+		ExecutorService executor = Executors.newFixedThreadPool(1);
 		
 		while(true) {
 			ArrayList<Email> emails= dataSource.fetchEmails(100);
 			if(null==emails)
 				break;
 			for(Email email : emails) {
-				executor.submit(new MailThread(email));
+				executor.submit(new MailThread(email,mailService));
 			}	
 			
 		}

@@ -53,7 +53,7 @@ public class DataSource {
 
 		Connection connection = this.getConnection();
 		try {
-			String selectQuery = "SELECT `ID`,`FROM`,`TO`,`SUBJECT`,`BODY` from MAIL WHERE `SENT_STATUS`=? LIMIT ?";
+			String selectQuery = "SELECT `ID`,`FROM`,`TO`,`SUBJECT`,`BODY` from mail WHERE `SENT_STATUS`=? LIMIT ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, 0);
 			preparedStatement.setInt(2, limit);
@@ -83,6 +83,7 @@ public class DataSource {
 		for(int i=0;i<number;i++) {
 
 			try {
+				System.out.println("Inserting record number " + i + " into database");
 				String from = "from_" + String.valueOf(i) + "@mailinator.com";
 				String to = "to_" + String.valueOf(i) + "@mailinator.com";
 				String subject = "Test Mail from " + from + " to " + to;

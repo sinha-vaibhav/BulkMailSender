@@ -3,13 +3,15 @@ package com.email.sender.BulkEmailSender;
 public class MailThread implements Runnable {
 	
 	private Email email;
+	private MailingService mailingService;
 	
-	public MailThread(Email email) {
+	public MailThread(Email email,MailingService mailingService) {
 		this.email = email;
+		this.mailingService = mailingService;
 	}
 
 	public void run() {
-		MailingService.sendEmail(email);
+		mailingService.sendEmail(email);
 	}
 
 }
