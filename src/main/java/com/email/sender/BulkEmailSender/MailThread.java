@@ -1,5 +1,10 @@
 package com.email.sender.BulkEmailSender;
 
+/**
+ * @author vaibhav
+ *
+ */
+
 public class MailThread implements Runnable {
 	
 	private Email email;
