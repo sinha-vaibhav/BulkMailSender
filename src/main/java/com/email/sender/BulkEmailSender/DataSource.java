@@ -1,12 +1,9 @@
 package com.email.sender.BulkEmailSender;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -28,33 +25,10 @@ public class DataSource {
 			connection = DriverManager.getConnection(url,user,password);
 		} catch (Exception e) {
 			System.out.println("Error in getting database connection or check properties file");
+			System.exit(0);
 		}
 
 	}
-
-
-/*	public static Connection initDataSource() {
-		Properties prop = new Properties();
-		InputStream input = null;
-
-		try {
-			input = new FileInputStream("app.properties");
-			prop.load(input);
-			String user = prop.getProperty("db_user");
-			String password = prop.getProperty("db_password");
-			String url = prop.getProperty("db_url");
-			connection = DriverManager.getConnection(url,user,password);
-			return connection;
-
-		} catch (Exception e) {
-			System.out.println("Error in reading properties file. Check app.properties file");
-			System.exit(0);
-			e.printStackTrace();
-		}
-		return null;
-	}*/
-
-
 
 	public Connection getConnection() {
 
@@ -62,13 +36,18 @@ public class DataSource {
 			return connection;
 		} catch (Exception e) {
 			System.out.println("Failed to get database connection");
-			//System.exit(0);
+			System.exit(0);
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-
+	/*	
+	 * 
+	 * The below function returns list of mails which
+	 * are not sent till now(have SENT_STATUS=0
+	 * and limit also
+	 */
 	public ArrayList<Email> fetchEmails(int limit)
 	{
 
@@ -91,12 +70,16 @@ public class DataSource {
 			return emails;		
 		} catch(Exception e) {
 			System.out.println("Error in fetching records from the database");
-			e.printStackTrace();
+			System.exit(0);
 		}
 		return null;
 	}
 
-	public void insertIntoDatabase(int number) {
+	/*
+	 * This function is used to setup the database with a 
+	 * configurable number of records
+	 */
+	public void insertIntoDatabase(String from,int number) {
 
 
 		String insertTableSQL = "INSERT INTO mail(`FROM`,`TO`,`SUBJECT`,`BODY`) VALUES (?,?,?,?)";
@@ -104,7 +87,6 @@ public class DataSource {
 
 			try {
 				System.out.println("Inserting record number " + i + " into database");
-				String from = "from_" + String.valueOf(i) + "@mailinator.com";
 				String to = "to_" + String.valueOf(i) + "@mailinator.com";
 				String subject = "Test Mail from " + from + " to " + to;
 				String body = "This is a test email body for " + subject;
@@ -118,11 +100,16 @@ public class DataSource {
 
 			} catch(Exception e) {
 				System.out.println("Error in inserting into database, check database connection");
-				e.printStackTrace();
+				System.exit(0);
 			}
 		}
 	}
 
+	/*
+	 * Updating the mail status to In process of Sending so that it is
+	 * not fetched again to be sent again
+	 * 
+	 */
 	public void updateMailStatusSending(int id) {
 
 		String updateQuery = "UPDATE mail SET `SENT_STATUS`=? WHERE `ID`=?;";
@@ -133,9 +120,14 @@ public class DataSource {
 			preparedStatement.executeUpdate();
 		} catch(Exception e) {
 			System.out.println("Unable to update Mail Sent Status for ID -> " + id + " due to " + e.getMessage());
+			System.exit(0);
 		}
 	}
 
+	/*
+	 * Updates the email to SENT_STATUS = 1 so that it is not sent again
+	 * 
+	 */
 	public void updateSentEmail(int id) {
 
 		String updateQuery = "UPDATE mail SET `SENT_STATUS`=? WHERE `ID`=?;";
@@ -146,9 +138,10 @@ public class DataSource {
 			preparedStatement.executeUpdate();
 		} catch(Exception e) {
 			System.out.println("Unable to update Mail Sent Status for ID -> " + id + " due to " + e.getMessage());
+			System.exit(0);
 		}
 	}
-
+	
 	public void updateMailStatusNotSent(int id) {
 
 		String updateQuery = "UPDATE mail SET `SENT_STATUS`=? WHERE `ID`=?;";
@@ -160,9 +153,10 @@ public class DataSource {
 			preparedStatement.executeUpdate();
 		} catch(Exception e) {
 			System.out.println("Unable to update Mail Sent Status for ID -> " + id + " due to " + e.getMessage());
+			System.exit(0);
 		} 
 	}
-	public void setupData(int num) {
+	public void setupData(String from, int num) {
 
 		ResultSet rs = null;
 		Connection connection = null;
@@ -176,7 +170,7 @@ public class DataSource {
 				int numberOfRows = rs.getInt(1);
 				if(numberOfRows==0) {
 					System.out.println("No data found in mail table, so inserting data");
-					this.insertIntoDatabase(num);
+					this.insertIntoDatabase(from,num);
 				}
 				else {
 					System.out.println("Data Found in mail table, no need to populate data");
@@ -187,7 +181,7 @@ public class DataSource {
 
 			} else {
 				System.out.println("error: could not get the record counts");
-				//System.exit(0);
+				System.exit(0);
 			}
 		} catch (Exception e) {
 			System.out.println("Error in setting up database " + e.getLocalizedMessage());
@@ -197,6 +191,7 @@ public class DataSource {
 				pstmt.close();
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.exit(0);
 			}
 		}
 
@@ -206,16 +201,9 @@ public class DataSource {
 			connection.close();
 		} catch(Exception e) {
 			System.out.println("Error in closing database connection due to " + e.getMessage());
+			System.exit(0);
 		}
 	}
-
-
-
-
-
-
-
-
 
 
 	public void generateReport() {

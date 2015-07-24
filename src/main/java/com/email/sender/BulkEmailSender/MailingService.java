@@ -35,16 +35,28 @@ public class MailingService {
 		});
 	}
 
-
+	
+	/*
+	 * Used to send email
+	 * 
+	 */
 	public void sendEmail(Email email) {
 		
 		System.out.println("Trying to send email T0 " + email.getToEmailAddress() + " with ID -> " + email.getId());
 		try {  
-			MimeMessage message = new MimeMessage(Session.getDefaultInstance(props));  
+												//Getting the default Session instance which was created earlier
+												//rather than creating again
+			MimeMessage message = new MimeMessage(Session.getDefaultInstance(props)); 
+			
+			
 			message.setFrom(new InternetAddress(email.getFromEmailAddress()));
 			message.addRecipient(Message.RecipientType.TO,new InternetAddress(email.getToEmailAddress())); 
 			message.setSubject(email.getSubject());  
-			message.setText(email.getBody());  
+			message.setText(email.getBody());
+			
+			/*
+			 * Below code speeds up the send operation by getting transport from the session only 
+			 */
 			Transport transport = session.getTransport("smtp");
 			transport.connect(this.props.getProperty("mail.smtp.host"), 
 					Integer.parseInt(this.props.getProperty("mail.smtp.port")),
